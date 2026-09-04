@@ -6,105 +6,135 @@ const KANDIDATI = [
     "fotka": "kandidat_01.jpg",
     "jmeno": "Tomáš Šmíd",
     "povolani": "Podnikatel ve stavebnictví",
-    "vek": "35"
+    "vek": "35",
+    "portret": "obrazky/kandidati-portret/kandidat_01.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_01.jpg"
   },
   {
     "poradi": 2,
     "fotka": "kandidat_02.jpg",
     "jmeno": "Vladimír Vaindl",
     "povolani": "Zámečník",
-    "vek": "53"
+    "vek": "53",
+    "portret": "obrazky/kandidati-portret/kandidat_02.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_02.jpg"
   },
   {
     "poradi": 3,
     "fotka": "kandidat_03.jpg",
     "jmeno": "Václav Šmatlák",
     "povolani": "Technolog automatizace",
-    "vek": "38"
+    "vek": "38",
+    "portret": "obrazky/kandidati-portret/kandidat_03.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_03.jpg"
   },
   {
     "poradi": 4,
     "fotka": "kandidat_04.jpg",
     "jmeno": "Petr Čejka",
     "povolani": "Vedoucí údržby",
-    "vek": "33"
+    "vek": "33",
+    "portret": "obrazky/kandidati-portret/kandidat_04.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_04.jpg"
   },
   {
     "poradi": 5,
     "fotka": "kandidat_05.jpg",
     "jmeno": "Petr Pidrman",
     "povolani": "Dispečer",
-    "vek": "37"
+    "vek": "37",
+    "portret": "obrazky/kandidati-portret/kandidat_05.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_05.jpg"
   },
   {
     "poradi": 6,
     "fotka": "kandidat_06.jpg",
     "jmeno": "Lukáš Mošna",
     "povolani": "Řidič",
-    "vek": "37"
+    "vek": "37",
+    "portret": "obrazky/kandidati-portret/kandidat_06.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_06.jpg"
   },
   {
     "poradi": 7,
     "fotka": "kandidat_07.jpg",
     "jmeno": "Ing. Michaela Majerová",
     "povolani": "Účetní",
-    "vek": "32"
+    "vek": "32",
+    "portret": "obrazky/kandidati-portret/kandidat_07.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_07.jpg"
   },
   {
     "poradi": 8,
     "fotka": "kandidat_08.jpg",
     "jmeno": "Jiří Rybák",
     "povolani": "Řidič",
-    "vek": "26"
+    "vek": "26",
+    "portret": "obrazky/kandidati-portret/kandidat_08.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_08.jpg"
   },
   {
     "poradi": 9,
     "fotka": "kandidat_09.jpg",
     "jmeno": "Bc. Jakub Maxa",
     "povolani": "Projektový manažer",
-    "vek": "30"
+    "vek": "30",
+    "portret": "obrazky/kandidati-portret/kandidat_09.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_09.jpg"
   },
   {
     "poradi": 10,
     "fotka": "kandidat_10.jpg",
     "jmeno": "Michaela Bůchová",
     "povolani": "Manažerka kvality",
-    "vek": "37"
+    "vek": "37",
+    "portret": "obrazky/kandidati-portret/kandidat_10.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_10.jpg"
   },
   {
     "poradi": 11,
     "fotka": "kandidat_11.jpg",
     "jmeno": "Bc. Dana Šnebergerová",
     "povolani": "Vrchní sestra",
-    "vek": "64"
+    "vek": "64",
+    "portret": "obrazky/kandidati-portret/kandidat_11.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_11.jpg"
   },
   {
     "poradi": 12,
     "fotka": "kandidat_12.jpg",
     "jmeno": "Jaroslav Strnad",
     "povolani": "Cestář",
-    "vek": "61"
+    "vek": "61",
+    "portret": "obrazky/kandidati-portret/kandidat_12.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_12.jpg"
   },
   {
     "poradi": 13,
     "fotka": "kandidat_13.jpg",
     "jmeno": "Ing. Václav Tůma",
     "povolani": "Softwarový architekt",
-    "vek": "43"
+    "vek": "43",
+    "portret": "obrazky/kandidati-portret/kandidat_13.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_13.jpg"
   },
   {
     "poradi": 14,
     "fotka": "kandidat_14.jpg",
     "jmeno": "Veronika Lukešová",
     "povolani": "Učitelka MŠ",
-    "vek": "35"
+    "vek": "35",
+    "portret": "obrazky/kandidati-portret/kandidat_14.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_14.jpg"
   },
   {
     "poradi": 15,
     "fotka": "kandidat_15.jpg",
     "jmeno": "Petr Pařízek",
     "povolani": "Student",
-    "vek": "20"
+    "vek": "20",
+    "portret": "obrazky/kandidati-portret/kandidat_15.jpg",
+    "ctverec": "obrazky/kandidati/kandidat_15.jpg"
   }
 ];
 

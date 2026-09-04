@@ -168,6 +168,13 @@ h2 {
   font-style: italic;
 }
 
+/* ------------------------------------------------------------ HERO ---- */
+.hero {
+  max-width: var(--sirka);
+  margin: 0 auto;
+  padding: 2.6rem 1.25rem 3rem;
+}
+
 /* --------------------------------------------------------- KARUSEL ---- */
 .karusel {
   position: relative;
@@ -195,42 +202,64 @@ h2 {
   .karusel-pas { transition: none; }
 }
 
-.snimek {
-  flex: 0 0 100%;
+.snimek { flex: 0 0 100%; min-width: 0; }
+
+/*  Snímek kandidáta. Obal je zatím div; až budou profily, stane se
+    z něj odkaz a stačí doplnit :hover — rozvržení se nemění.          */
+.snimek-osoba {
   display: grid;
-  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
-  gap: 2rem;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: 2.2rem;
   padding: 2rem;
   align-items: center;
-}
-
-.snimek-nahled {
-  border: 1px solid var(--linka);
-  /* náhled plakátu je vysoký; ať slide neroste do nekonečna */
-  max-height: 420px;
-  width: auto;
-  margin: 0 auto;
-}
-
-.snimek h3 {
-  margin: 0 0 .5rem;
-  font-size: 1.35rem;
-  line-height: 1.25;
-}
-.snimek p { margin: 0 0 1.3rem; color: var(--seda); }
-
-.stahnout {
-  display: inline-block;
-  background: var(--cervena);
-  color: #fff;
+  color: inherit;
   text-decoration: none;
-  font-weight: 700;
-  padding: .7rem 1.4rem;
-  border: 2px solid var(--cervena);
 }
-.stahnout:hover,
-.stahnout:focus-visible { background: #fff; color: var(--cervena); }
-.stahnout .velikost { font-weight: 400; opacity: .85; }
+
+.osoba-foto { position: relative; background: var(--linka); }
+.osoba-foto img {
+  display: block;
+  width: 100%;
+  /* portrét 4:5; kdyby chyběl a použil se čtverec, object-fit ho ořízne
+     místo aby ho roztáhl */
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.osoba-poradi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--text);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: .5rem .75rem;
+}
+
+.osoba-jmeno {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.osoba-povolani {
+  margin: .5rem 0 0;
+  color: var(--seda);
+  font-size: 1.05rem;
+}
+.osoba-linka {
+  height: 3px;
+  background: var(--cervena);
+  margin: 1.1rem 0;
+  max-width: 220px;
+}
+.osoba-poradi-text {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
 
 .karusel-sip {
   flex: none;
@@ -243,15 +272,12 @@ h2 {
   border: 1px solid var(--linka);
   cursor: pointer;
 }
-.karusel-sip:hover:not(:disabled) {
-  border-color: var(--cervena);
-  color: var(--cervena);
-}
-.karusel-sip:disabled { opacity: .3; cursor: default; }
+.karusel-sip:hover { border-color: var(--cervena); color: var(--cervena); }
 
 .karusel-tecky {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: .5rem;
   margin-top: 1.2rem;
 }
@@ -268,6 +294,61 @@ h2 {
   background: var(--cervena);
   border-color: var(--cervena);
 }
+
+/* -------------------------------------------------------- MATERIÁLY -- */
+.materialy {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.4rem;
+}
+
+.material-odkaz {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--linka);
+  text-decoration: none;
+  color: var(--text);
+  background: #fff;
+}
+.material-odkaz:hover,
+.material-odkaz:focus-visible { border-color: var(--cervena); }
+
+.material-odkaz img {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  object-position: top center;
+  background: var(--podklad);
+  padding: .8rem;
+}
+
+.material-telo {
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.material-telo h3 { margin: 0 0 .4rem; font-size: 1.15rem; line-height: 1.25; }
+.material-telo p {
+  margin: 0 0 1rem;
+  color: var(--seda);
+  font-size: .92rem;
+  flex: 1;
+}
+
+.material-stahnout {
+  align-self: flex-start;
+  background: var(--cervena);
+  color: #fff;
+  font-weight: 700;
+  font-size: .92rem;
+  padding: .6rem 1.1rem;
+}
+.material-odkaz:hover .material-stahnout { background: var(--tmava); }
 
 /* -------------------------------------------------------- HODNOCENÍ --- */
 .hodnoceni {
@@ -427,12 +508,13 @@ h2 {
 
 /* ------------------------------------------------------------ ÚZKÉ ---- */
 @media (max-width: 760px) {
-  .snimek {
+  .snimek-osoba {
     grid-template-columns: 1fr;
-    gap: 1.3rem;
+    gap: 1.2rem;
     padding: 1.3rem;
   }
-  .snimek-nahled { max-height: 300px; }
+  .osoba-foto { max-width: 240px; }
+  .osoba-linka { margin: .8rem 0; }
   .karusel-sip { width: 38px; height: 38px; font-size: 1.4rem; }
   .hodnoceni li { grid-template-columns: 1.9rem minmax(0, 1fr); }
   .hodnoceni .procento { grid-column: 2; margin-top: .2rem; }
@@ -443,6 +525,6 @@ h2 {
 @media print {
   .menu, .karusel-sip, .karusel-tecky, .preskoc { display: none; }
   .karusel-pas { transform: none !important; display: block; }
-  .snimek { break-inside: avoid; }
+  .snimek, .material { break-inside: avoid; }
   body { font-size: 11pt; }
 }

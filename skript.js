@@ -2,8 +2,8 @@
    OBČANÉ Mirošov — chování webu
 
    Bez frameworku a bez sestavování. Data přicházejí z data/kandidati.js,
-   které generuje nastroje/web-podklady.py z kandidati.tex
-   a obcane-casopis.tex — proto se tady nic z toho neopisuje.
+   které generuje nastroje/web-podklady.py z kandidati.tex, hodnoceni.tex
+   a program.tex — proto se tady nic z toho neopisuje.
 
    Data se načítají <script>em, ne fetchem: fetch by na file:// spadl
    na CORS a stránka by nešla otevřít lokálním dvojklikem.
@@ -11,106 +11,100 @@
 (function () {
   "use strict";
 
-  var jenText = function (s) { return String(s == null ? "" : s); };
+  var POSUN_MS = 3000;   // jak dlouho stojí snímek karuselu
 
   /* prvek s textem — bez innerHTML, ať se do stránky nedá propašovat
      značkování z dat */
   function prvek(tag, trida, text) {
     var e = document.createElement(tag);
     if (trida) { e.className = trida; }
-    if (text !== undefined) { e.textContent = jenText(text); }
+    if (text !== undefined) { e.textContent = String(text == null ? "" : text); }
     return e;
   }
 
-  /* ------------------------------------------------------- MATERIÁLY -- */
-  function vypisMaterialy() {
-    var pas = document.getElementById("karusel-pas");
-    var tecky = document.getElementById("karusel-tecky");
-    if (!pas || typeof MATERIALY === "undefined") { return; }
+  /* ==================================================== KARUSEL ======== */
+  /*  Obecný karusel: dostane id prvků a pole snímků. Dřív byl napsaný
+      napevno pro materiály ke stažení; teď v něm jezdí kandidáti
+      a materiály jsou obyčejné dlaždice.                                */
+  function Karusel(idBoxu, idPasu, idTecek, polozky, vyrobSnimek, popisek) {
+    var box = document.getElementById(idBoxu);
+    var pas = document.getElementById(idPasu);
+    var tecky = document.getElementById(idTecek);
+    if (!box || !pas || !polozky || !polozky.length) { return null; }
 
-    MATERIALY.forEach(function (m, i) {
+    var kde = 0;
+    var timer = null;
+    var klid = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    polozky.forEach(function (p, i) {
       var li = prvek("li", "snimek");
       li.setAttribute("role", "tabpanel");
-      li.setAttribute("aria-label", (i + 1) + " z " + MATERIALY.length + ": " + m.nazev);
-
-      var img = prvek("img", "snimek-nahled");
-      img.src = m.nahled;
-      img.alt = "Náhled: " + m.nazev;
-      img.loading = i === 0 ? "eager" : "lazy";
-      li.appendChild(img);
-
-      var text = prvek("div", "snimek-text");
-      text.appendChild(prvek("h3", null, m.nazev));
-      text.appendChild(prvek("p", null, m.popis));
-
-      var a = prvek("a", "stahnout");
-      a.href = m.soubor;
-      a.setAttribute("download", "");
-      a.appendChild(document.createTextNode("Stáhnout PDF "));
-      a.appendChild(prvek("span", "velikost", "(" + m.velikost + ")"));
-      text.appendChild(a);
-
-      li.appendChild(text);
+      li.setAttribute("aria-label",
+        (i + 1) + " z " + polozky.length + ": " + popisek(p));
+      vyrobSnimek(li, p, i);
       pas.appendChild(li);
 
       var b = prvek("button", "tecka");
       b.type = "button";
       b.setAttribute("role", "tab");
-      b.setAttribute("aria-label", m.nazev);
-      b.addEventListener("click", function () { jdiNa(i); });
+      b.setAttribute("aria-label", popisek(p));
+      b.addEventListener("click", function () { jdiNa(i); stop(); });
       tecky.appendChild(b);
     });
-  }
 
-  /* ---------------------------------------------------------- KARUSEL - */
-  var kde = 0;
+    function jdiNa(i) {
+      var n = polozky.length;
+      /* dokola: za posledním se pokračuje prvním */
+      kde = ((i % n) + n) % n;
+      pas.style.transform = "translateX(" + (-kde * 100) + "%)";
 
-  function pocet() {
-    var pas = document.getElementById("karusel-pas");
-    return pas ? pas.children.length : 0;
-  }
-
-  function jdiNa(i) {
-    var n = pocet();
-    if (!n) { return; }
-    kde = Math.max(0, Math.min(i, n - 1));
-
-    var pas = document.getElementById("karusel-pas");
-    pas.style.transform = "translateX(" + (-kde * 100) + "%)";
-
-    var tecky = document.getElementById("karusel-tecky").children;
-    for (var j = 0; j < tecky.length; j++) {
-      tecky[j].setAttribute("aria-selected", j === kde ? "true" : "false");
+      for (var j = 0; j < tecky.children.length; j++) {
+        tecky.children[j].setAttribute("aria-selected", j === kde ? "true" : "false");
+      }
+      /* Snímky mimo obraz se schovají před čtečkou i před tabulátorem,
+         jinak by se tabem dalo odejít na neviditelný prvek. */
+      for (var k = 0; k < pas.children.length; k++) {
+        var mimo = k !== kde;
+        pas.children[k].setAttribute("aria-hidden", mimo ? "true" : "false");
+        var ohnisko = pas.children[k].querySelectorAll("a, button");
+        for (var m = 0; m < ohnisko.length; m++) {
+          ohnisko[m].tabIndex = mimo ? -1 : 0;
+        }
+      }
     }
-    /* Snímky mimo obraz se schovají před čtečkou i před tabulátorem,
-       jinak by se tabem dalo odejít na neviditelné tlačítko. */
-    for (var k = 0; k < pas.children.length; k++) {
-      var mimo = k !== kde;
-      pas.children[k].setAttribute("aria-hidden", mimo ? "true" : "false");
-      var odkaz = pas.children[k].querySelector("a");
-      if (odkaz) { odkaz.tabIndex = mimo ? -1 : 0; }
+
+    function start() {
+      if (klid || timer || polozky.length < 2) { return; }
+      timer = window.setInterval(function () { jdiNa(kde + 1); }, POSUN_MS);
     }
-    document.querySelector(".karusel-vlevo").disabled = kde === 0;
-    document.querySelector(".karusel-vpravo").disabled = kde === n - 1;
-  }
+    function stop() {
+      if (timer) { window.clearInterval(timer); timer = null; }
+    }
 
-  function karusel() {
-    var box = document.getElementById("karusel");
-    if (!box || !pocet()) { return; }
-
-    document.querySelector(".karusel-vlevo")
-      .addEventListener("click", function () { jdiNa(kde - 1); });
-    document.querySelector(".karusel-vpravo")
-      .addEventListener("click", function () { jdiNa(kde + 1); });
+    box.querySelector(".karusel-vlevo")
+       .addEventListener("click", function () { jdiNa(kde - 1); stop(); });
+    box.querySelector(".karusel-vpravo")
+       .addEventListener("click", function () { jdiNa(kde + 1); stop(); });
 
     box.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowLeft") { jdiNa(kde - 1); }
-      if (e.key === "ArrowRight") { jdiNa(kde + 1); }
+      if (e.key === "ArrowLeft") { jdiNa(kde - 1); stop(); }
+      if (e.key === "ArrowRight") { jdiNa(kde + 1); stop(); }
     });
 
-    /* tažení prstem */
+    /* Samočinný posun se zastaví, jakmile s karuselem někdo pracuje —
+       ať pod rukama neuteče snímek, který si člověk zrovna čte. */
+    box.addEventListener("mouseenter", stop);
+    box.addEventListener("focusin", stop);
+    box.addEventListener("mouseleave", start);
+    /* Na skrytém panelu nemá cenu přepínat. */
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { stop(); } else { start(); }
+    });
+
     var x0 = null;
     box.addEventListener("touchstart", function (e) {
+      stop();
       x0 = e.changedTouches[0].clientX;
     }, { passive: true });
     box.addEventListener("touchend", function (e) {
@@ -121,6 +115,65 @@
     }, { passive: true });
 
     jdiNa(0);
+    start();
+    return { jdiNa: jdiNa };
+  }
+
+  /* -------------------------------------------------- HERO: KANDIDÁTI - */
+  function snimekKandidata(li, k) {
+    /*  Obal je zatím <div>. Až budou profily, stačí z něj udělat <a> —
+        struktura i vzhled zůstanou.                                     */
+    var obal = prvek("div", "snimek-osoba");
+
+    var ramFoto = prvek("div", "osoba-foto");
+    var img = document.createElement("img");
+    img.src = k.portret || k.ctverec;
+    img.alt = k.jmeno;
+    img.width = 500;
+    img.height = k.portret ? 625 : 500;
+    ramFoto.appendChild(img);
+    ramFoto.appendChild(prvek("span", "osoba-poradi", k.poradi));
+    obal.appendChild(ramFoto);
+
+    var text = prvek("div", "osoba-text");
+    text.appendChild(prvek("p", "osoba-jmeno", k.jmeno));
+    text.appendChild(prvek("p", "osoba-povolani", k.povolani + ", " + k.vek + " let"));
+    text.appendChild(prvek("div", "osoba-linka"));
+    text.appendChild(prvek("p", "osoba-poradi-text", k.poradi + ". na kandidátce"));
+    obal.appendChild(text);
+
+    li.appendChild(obal);
+  }
+
+  /* ------------------------------------------------------- MATERIÁLY -- */
+  function vypisMaterialy() {
+    var seznam = document.getElementById("materialy-seznam");
+    if (!seznam || typeof MATERIALY === "undefined") { return; }
+
+    MATERIALY.forEach(function (m) {
+      var li = prvek("li", "material");
+
+      var a = document.createElement("a");
+      a.className = "material-odkaz";
+      a.href = m.soubor;
+      a.setAttribute("download", "");
+
+      var img = document.createElement("img");
+      img.src = m.nahled;
+      img.alt = "Náhled: " + m.nazev;
+      img.loading = "lazy";
+      a.appendChild(img);
+
+      var telo = prvek("div", "material-telo");
+      telo.appendChild(prvek("h3", null, m.nazev));
+      telo.appendChild(prvek("p", null, m.popis));
+      telo.appendChild(prvek("span", "material-stahnout",
+                             "Stáhnout PDF (" + m.velikost + ")"));
+      a.appendChild(telo);
+
+      li.appendChild(a);
+      seznam.appendChild(li);
+    });
   }
 
   /* ------------------------------------------------------- HODNOCENÍ -- */
@@ -157,7 +210,7 @@
 
       var obal = prvek("div", "kandidat-foto");
       var img = document.createElement("img");
-      img.src = "obrazky/kandidati/" + k.fotka;
+      img.src = k.ctverec || ("obrazky/kandidati/" + k.fotka);
       img.alt = k.jmeno;
       img.loading = "lazy";
       img.width = 600;
@@ -177,11 +230,14 @@
   }
 
   function start() {
-    vypisMaterialy();
-    karusel();
-    vypisHodnoceni();
+    if (typeof KANDIDATI !== "undefined") {
+      Karusel("karusel", "karusel-pas", "karusel-tecky", KANDIDATI,
+              snimekKandidata, function (k) { return k.jmeno; });
+    }
     vypisProgram();
+    vypisHodnoceni();
     vypisKandidatku();
+    vypisMaterialy();
   }
 
   if (document.readyState === "loading") {
