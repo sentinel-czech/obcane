@@ -121,7 +121,7 @@ const MATERIALY = [
     "nahled": "obrazky/obcane-profese-a2.jpg",
     "nazev": "Kdo jsme",
     "popis": "Z jakých oborů kandidáti jsou a jak je tým starý. Doplňkový plakát A2.",
-    "velikost": "30 kB"
+    "velikost": "31 kB"
   },
   {
     "soubor": "soubory/obcane-casopis.pdf",
