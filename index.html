@@ -13,14 +13,14 @@
 <!-- ?v= je proti cache: GitHub Pages posílá max-age=600 a prohlížeč pak
      drží starý soubor i po Ctrl+Shift+R. Při každé změně CSS/JS se
      číslo zvýší a prohlížeč si musí stáhnout novou verzi. -->
-<link rel="stylesheet" href="styl.css?v=5">
+<link rel="stylesheet" href="styl.css?v=11">
 </head>
 <body>
 
 <a class="preskoc" href="#obsah">Přeskočit na obsah</a>
 
 <!-- ============================================================ HLAVIČKA -->
-<header class="hlavicka">
+<header class="hlavicka" id="zacatek">
   <div class="pas">
     <img class="logo" src="obrazky/logo.svg" alt="Logo OBČANÉ Mirošov" width="120" height="120">
     <div class="hlavicka-text">
@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <nav class="menu" aria-label="Hlavní nabídka">
+  <nav class="menu" id="menu" aria-label="Hlavní nabídka">
     <a href="#program">Program</a>
     <a href="#hodnoceni">Splněné sliby</a>
     <a href="#kandidatka">Kandidátka</a>
@@ -64,6 +64,7 @@
 <!-- ============================================================= PROGRAM -->
 <section id="program" class="sekce sekce-seda">
   <h2>Program na období 2026–2030</h2>
+  <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
   <p class="podnadpis">Za námi jsou vidět výsledky. Chceme pokračovat programem:</p>
   <ul class="program" id="program-seznam">
     <!-- vyplní skript.js -->
@@ -74,6 +75,7 @@
 <!-- =========================================================== HODNOCENÍ -->
 <section id="hodnoceni" class="sekce">
   <h2>Vysvědčení za období 2022–2026</h2>
+  <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
   <p class="podnadpis">Jak jsme plnili to, co jsme slíbili minule.</p>
   <ol class="hodnoceni" id="hodnoceni-seznam">
     <!-- vyplní skript.js -->
@@ -83,6 +85,7 @@
 <!-- ========================================================== KANDIDÁTKA -->
 <section id="kandidatka" class="sekce sekce-seda">
   <h2>Kandidátka</h2>
+  <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
   <p class="podnadpis">Patnáct lidí z Mirošova. Číslo u fotky je pořadí na kandidátce.</p>
   <ul class="kandidatka" id="kandidatka-seznam">
     <!-- vyplní skript.js -->
@@ -92,6 +95,7 @@
 <!-- =========================================================== MATERIÁLY -->
 <section id="materialy" class="sekce">
   <h2>Materiály ke stažení</h2>
+  <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
   <p class="podnadpis">Plakáty a tiskoviny ve formátu PDF, připravené k tisku.</p>
   <ul class="materialy" id="materialy-seznam">
     <!-- vyplní skript.js -->
@@ -101,6 +105,7 @@
 <!-- ============================================================= KONTAKT -->
 <section id="kontakt" class="sekce sekce-seda">
   <h2>Najdete nás online</h2>
+  <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
   <p class="podnadpis">Ptejte se, pište, sledujte, co se ve městě děje.</p>
 
   <div class="site">
@@ -139,7 +144,7 @@
   <p class="drobne">Volby do zastupitelstva města Mirošov, 9. a 10. října 2026.</p>
 </footer>
 
-<script src="data/kandidati.js?v=5"></script>
-<script src="skript.js?v=5"></script>
+<script src="data/kandidati.js?v=11"></script>
+<script src="skript.js?v=11"></script>
 </body>
 </html>

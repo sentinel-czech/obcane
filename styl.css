@@ -32,10 +32,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-}
+/*  Rolování na kotvy je záměrně OKAMŽITÉ, žádné scroll-behavior: smooth.
+    Plynulá animace trvá u dlouhé stránky přes sekundu a jakýkoli dotek
+    kolečka či touchpadu (včetně setrvačného dojezdu) ji zruší v půlce —
+    stránka pak „cukne a nikam nejede". Okamžitý skok je atomický a nedá
+    se přerušit ničím. Nevracet.                                        */
 
 body {
   margin: 0;
@@ -169,6 +170,20 @@ a { color: var(--tmava); }
   line-height: 1.3;
 }
 .vyzva strong { color: var(--cervena); }
+
+/*  Malý odkaz zpět k nabídce u každého nadpisu sekce — na dlouhé
+    stránce se z hloubky špatně vrací. Plave vpravo vedle nadpisu.     */
+.zpet-menu {
+  float: right;
+  margin-top: .4rem;
+  font-size: .85rem;
+  color: var(--seda);
+  text-decoration: none;
+  border: 1px solid var(--linka);
+  padding: .3rem .7rem;
+}
+.zpet-menu:hover,
+.zpet-menu:focus-visible { color: var(--cervena); border-color: var(--cervena); }
 
 h2 {
   margin: 0;

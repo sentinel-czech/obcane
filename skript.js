@@ -13,6 +13,13 @@
 
   var POSUN_MS = 3000;   // jak dlouho stojí snímek karuselu
 
+  /*  Vypínač pro ladění: false = žádný karusel. Vykreslí se jen první
+      kandidát staticky, žádný časovač, žádné posluchače, šipky a tečky
+      se schovají. Slouží k důkazu, že karusel ne/může za chování
+      scrollování.                                                      */
+  var KARUSEL_ZAPNUTY = true;
+  var VERZE = 11;
+
   /* prvek s textem — bez innerHTML, ať se do stránky nedá propašovat
      značkování z dat */
   function prvek(tag, trida, text) {
@@ -117,6 +124,72 @@
     jdiNa(0);
     start();
     return { jdiNa: jdiNa };
+  }
+
+  /* ------------------------------------------------- KOTVY V MENU ----- */
+  /*  Jeden okamžitý skok, nic víc. Důvody, proč NE plynulá animace ani
+      holé hash odkazy:
+        1. Animovaný scroll je přerušitelný — setrvačný dojezd touchpadu
+           nebo kolečka ho zruší v půlce a stránka trčí („cukne a stojí").
+        2. Firefox neudělá nic při kliku na kotvu, která už je v adrese
+           (druhý klik na tutéž položku menu).
+      scrollIntoView bez behavior je okamžitý a atomický — mezi kliknutím
+      a doskočením není okno, ve kterém by šel přerušit. replaceState
+      udrží adresu, aniž by spustil vlastní hash navigaci. Tohle NENÍ
+      dřívější korekční smyčka (ta opakovaně volala scrollTo) — jediné
+      volání na jedno kliknutí.                                         */
+  /*  Setrvačný dojezd kolečka/touchpadu: hardware posílá scrollovací
+      události ještě stovky milisekund po tom, co uživatel přestal.
+      Kdo klikne na menu těsně po scrollování (typicky: odroluje zpět
+      nahoru a hned kliká), skočí správně — a dojezd ho vzápětí odveze
+      z cílové pozice pryč. Vypadá to pak, že klik „nescrolloval" nebo
+      skočil jinam. Proto se po kliku na kotvu wheel události na 500 ms
+      spolknou. Úmyslné scrollování do půl sekundy po kliknutí nezačne,
+      takže o nic nepřijde; dotyk a klávesy se nepotlačují vůbec.       */
+  function spolkniDojezd() {
+    /*  Ne pevné okno: volnoběžné kolečko a kinetický touchpad dojíždějí
+        i přes sekundu, pevných 500 ms je pustilo dál a stránka po skoku
+        „odjela nahoru". Štít proto žere wheel události, dokud chodí
+        v souvislé řadě, a zvedne se až 250 ms po poslední z nich.
+        Tvrdý strop 3 s zaručuje, že scrollování nikdy nezůstane mrtvé. */
+    var posledni = performance.now();
+    var strop = posledni + 3000;
+    var hlidka = null;
+
+    function filtr(e) {
+      var ted = performance.now();
+      if (ted < strop) {
+        e.preventDefault();
+        posledni = ted;
+      }
+    }
+    function konec() {
+      window.removeEventListener("wheel", filtr);
+      window.clearInterval(hlidka);
+    }
+    window.addEventListener("wheel", filtr, { passive: false });
+    hlidka = window.setInterval(function () {
+      var ted = performance.now();
+      if (ted - posledni > 250 || ted > strop) { konec(); }
+    }, 100);
+  }
+
+  function kotvy() {
+    var odkazy = document.querySelectorAll('a[href^="#"]');
+    Array.prototype.forEach.call(odkazy, function (a) {
+      var id = a.getAttribute("href").slice(1);
+      if (!id) { return; }
+      a.addEventListener("click", function (e) {
+        var cil = document.getElementById(id);
+        if (!cil) { return; }
+        e.preventDefault();
+        cil.scrollIntoView();
+        if (window.history && history.replaceState) {
+          history.replaceState(null, "", "#" + id);
+        }
+        spolkniDojezd();
+      });
+    });
   }
 
   /* -------------------------------------------------- HERO: KANDIDÁTI - */
@@ -234,9 +307,22 @@
   }
 
   function start() {
+    console.log("[web] verze " + VERZE
+                + ", karusel " + (KARUSEL_ZAPNUTY ? "zapnut" : "vypnut"));
+    kotvy();
     if (typeof KANDIDATI !== "undefined") {
-      Karusel("karusel", "karusel-pas", "karusel-tecky", KANDIDATI,
-              snimekKandidata, function (k) { return k.jmeno; });
+      if (KARUSEL_ZAPNUTY) {
+        Karusel("karusel", "karusel-pas", "karusel-tecky", KANDIDATI,
+                snimekKandidata, function (k) { return k.jmeno; });
+      } else {
+        /* statický náhradník: jen první kandidát, žádný časovač */
+        var li = prvek("li", "snimek");
+        snimekKandidata(li, KANDIDATI[0]);
+        document.getElementById("karusel-pas").appendChild(li);
+        Array.prototype.forEach.call(
+          document.querySelectorAll(".karusel-sip, #karusel-tecky"),
+          function (e) { e.style.display = "none"; });
+      }
     }
     vypisProgram();
     vypisHodnoceni();
