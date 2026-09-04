@@ -10,7 +10,10 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="obrazky/obcane-a2.jpg">
 <link rel="icon" href="obrazky/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styl.css">
+<!-- ?v= je proti cache: GitHub Pages posílá max-age=600 a prohlížeč pak
+     drží starý soubor i po Ctrl+Shift+R. Při každé změně CSS/JS se
+     číslo zvýší a prohlížeč si musí stáhnout novou verzi. -->
+<link rel="stylesheet" href="styl.css?v=5">
 </head>
 <body>
 
@@ -124,6 +127,9 @@
       </span>
     </a>
   </div>
+
+  <p class="vyzva">Dejte hlas kandidátce
+     <strong>č.&nbsp;1 OBČANÉ</strong>.</p>
 </section>
 
 </main>
@@ -133,7 +139,7 @@
   <p class="drobne">Volby do zastupitelstva města Mirošov, 9. a 10. října 2026.</p>
 </footer>
 
-<script src="data/kandidati.js"></script>
-<script src="skript.js"></script>
+<script src="data/kandidati.js?v=5"></script>
+<script src="skript.js?v=5"></script>
 </body>
 </html>

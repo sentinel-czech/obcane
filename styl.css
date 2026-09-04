@@ -149,6 +149,27 @@ a { color: var(--tmava); }
   padding-right: max(1.25rem, (100% - var(--sirka)) / 2);
 }
 
+/*  Poslední sekce musí být aspoň přes celou obrazovku. Prohlížeč umí
+    odrolovat nejvýš na „výška dokumentu minus výška okna"; bez tohohle
+    doběhu se na spodní sekce nedalo dojet tak, aby byly nahoře.
+    Měřeno na produkci: na 2K skončily „Ke stažení" i „Kontakt" na téže
+    pozici, takže druhý klik nepohnul vůbec ničím.                       */
+/*  Platí i na telefonu — změřeno, že tam byl Kontakt nedosažitelný taky.
+    Obsah zůstává nahoře (žádné centrování), volné místo padá pod výzvu
+    před patičku, kde působí jako běžný závěrečný odstup.               */
+#kontakt {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.vyzva {
+  margin: 2.6rem 0 0;
+  font-size: clamp(1.3rem, 3.4vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.vyzva strong { color: var(--cervena); }
+
 h2 {
   margin: 0;
   font-size: clamp(1.5rem, 4vw, 2.1rem);
@@ -193,6 +214,9 @@ h2 {
       Rezervované místo drží stránku ve stejné délce, takže se kotvy
       v menu nemají o co posunout.                                      */
   min-height: 389px;
+  /*  Zaručuje, že se vnitřek karuselu nemůže promítnout do rozvržení
+      zbytku stránky — přepínání snímků tedy nemá jak ovlivnit scroll.  */
+  contain: layout paint;
 }
 @media (max-width: 760px) {
   .karusel-okno { min-height: 470px; }
