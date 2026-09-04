@@ -119,6 +119,92 @@
     return { jdiNa: jdiNa };
   }
 
+  /* ------------------------------------------------- KOTVY V MENU ----- */
+  /*  První kliknutí do menu občas „propadlo": stránka se ještě dosazuje
+      (doléhají obrázky, doběhne vykreslení seznamů) a cílová sekce se
+      pod odkazem posune. Prohlížeč skočí na polohu platnou v okamžiku
+      kliknutí a skončí jinde. Změřeno přes DevTools protokol: na
+      mobilních datech byla odchylka -1416 px ještě půl sekundy po
+      načtení; po sekundě už je nula.
+
+      Řešíme to tím, že scroll řídíme sami a dokud se sazba usazuje,
+      polohu cíle přepočítáváme. Jakmile ale člověk sám zaroluje,
+      přestaneme — jinak bychom mu stránku pod rukama trhali.           */
+  /*  Jen jedna korekce naráz. Dvě rychlá kliknutí po sobě by jinak
+      spustila dvě hlídací smyčky, každou na jiný cíl, a přetahovaly by
+      se o polohu stránky.                                              */
+  var zrusPredchozi = null;
+
+  function najedNa(cil) {
+    if (zrusPredchozi) { zrusPredchozi(); }
+    var klid = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var chovani = klid ? "auto" : "smooth";
+
+    var kde = function () {
+      return Math.round(cil.getBoundingClientRect().top + window.pageYOffset);
+    };
+    var cilPx = kde();
+    window.scrollTo({ top: cilPx, behavior: chovani });
+    if (window.history && history.replaceState) {
+      history.replaceState(null, "", "#" + cil.id);
+    }
+
+    /*  Jak dlouho hlídat: dokud se stránka načítá, plus chvíli po tom.
+        Pevných pár vteřin nestačí — na pomalé lince (měřeno 25 kB/s)
+        se obrázky dolévaly ještě po třech vteřinách a cíl se pod námi
+        pořád posouval. Strop je pojistka, aby to neběželo donekonečna. */
+    var konec = Date.now() + 12000;
+    if (document.readyState !== "complete") {
+      window.addEventListener("load", function () {
+        konec = Math.min(konec, Date.now() + 1200);
+      });
+    } else {
+      konec = Date.now() + 1200;
+    }
+
+    var timer = window.setInterval(function () {
+      var nove = kde();
+      if (Math.abs(nove - cilPx) > 2) {
+        cilPx = nove;
+        window.scrollTo({ top: cilPx, behavior: chovani });
+      }
+      if (Date.now() > konec) { prestat(); }
+    }, 120);
+
+    function prestat() {
+      window.clearInterval(timer);
+      window.removeEventListener("wheel", prestat);
+      window.removeEventListener("touchstart", prestat);
+      window.removeEventListener("keydown", prestat);
+      if (zrusPredchozi === prestat) { zrusPredchozi = null; }
+    }
+    zrusPredchozi = prestat;
+    window.addEventListener("wheel", prestat, { passive: true });
+    window.addEventListener("touchstart", prestat, { passive: true });
+    window.addEventListener("keydown", prestat);
+  }
+
+  function kotvy() {
+    var odkazy = document.querySelectorAll('a[href^="#"]');
+    Array.prototype.forEach.call(odkazy, function (a) {
+      var id = a.getAttribute("href").slice(1);
+      if (!id) { return; }
+      a.addEventListener("click", function (e) {
+        var cil = document.getElementById(id);
+        if (!cil) { return; }
+        e.preventDefault();
+        najedNa(cil);
+      });
+    });
+    /*  Totéž platí pro adresu s kotvou zvenčí (obcane.online/#program) —
+        prohlížeč skočí dřív, než je co měřit.                          */
+    if (location.hash.length > 1) {
+      var cil = document.getElementById(location.hash.slice(1));
+      if (cil) { najedNa(cil); }
+    }
+  }
+
   /* -------------------------------------------------- HERO: KANDIDÁTI - */
   function snimekKandidata(li, k) {
     /*  Obal je zatím <div>. Až budou profily, stačí z něj udělat <a> —
@@ -162,6 +248,10 @@
       img.src = m.nahled;
       img.alt = "Náhled: " + m.nazev;
       img.loading = "lazy";
+      /*  Rozměry i tady: bez nich prohlížeč místo pro obrázek nerezervuje
+          a stránka se při doléhání náhledů prodlužuje.                  */
+      img.width = 900;
+      img.height = 1200;
       a.appendChild(img);
 
       var telo = prvek("div", "material-telo");
@@ -230,6 +320,7 @@
   }
 
   function start() {
+    kotvy();
     if (typeof KANDIDATI !== "undefined") {
       Karusel("karusel", "karusel-pas", "karusel-tecky", KANDIDATI,
               snimekKandidata, function (k) { return k.jmeno; });

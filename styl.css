@@ -189,6 +189,13 @@ h2 {
   min-width: 0;
   border: 1px solid var(--linka);
   background: #fff;
+  /*  Než skript vyplní snímky, je pás prázdný a hero má nulovou výšku.
+      Rezervované místo drží stránku ve stejné délce, takže se kotvy
+      v menu nemají o co posunout.                                      */
+  min-height: 389px;
+}
+@media (max-width: 760px) {
+  .karusel-okno { min-height: 470px; }
 }
 
 .karusel-pas {
