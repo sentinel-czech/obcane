@@ -8,6 +8,19 @@ Mirošov 9. a 10. října 2026.
 Žádné sestavování. Zapněte v repozitáři **Settings → Pages → Source:
 Deploy from a branch**, větev `main`, složka `/ (root)`. Web běží.
 
+Doména je `obcane.online`. Řídí ji soubor `CNAME` v kořeni repozitáře —
+GitHub podle něj pozná, na jaké adrese se má web tvářit. **Nemažte ho**,
+jinak se web vrátí na `sentinel-czech.github.io/obcane/` a doména přestane
+fungovat. V DNS u Forpsi na to navazuje:
+
+| Hostname | Typ | Hodnota |
+|---|---|---|
+| `obcane.online` | A | 185.199.108.153 |
+| `obcane.online` | A | 185.199.109.153 |
+| `obcane.online` | A | 185.199.110.153 |
+| `obcane.online` | A | 185.199.111.153 |
+| `www.obcane.online` | CNAME | `sentinel-czech.github.io` |
+
 Soubor `.nojekyll` je tam schválně — bez něj by GitHub Pages hnal
 stránku přes Jekyll a ignoroval adresáře začínající podtržítkem.
 
