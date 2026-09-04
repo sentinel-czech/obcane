@@ -124,6 +124,13 @@ const MATERIALY = [
     "velikost": "31 kB"
   },
   {
+    "soubor": "soubory/obcane-brozura-a5.pdf",
+    "nahled": "obrazky/obcane-brozura-a5.jpg",
+    "nazev": "Brožura",
+    "popis": "Čtyři strany A5: co se povedlo, co chceme dál a kdo kandiduje. K tisku na jeden list A4 oboustranně je obcane-brozura-a4-tisk.pdf.",
+    "velikost": "6.9 MB"
+  },
+  {
     "soubor": "soubory/obcane-casopis.pdf",
     "nahled": "obrazky/obcane-casopis.jpg",
     "nazev": "Vysvědčení za volební období",
