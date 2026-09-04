@@ -1,0 +1,448 @@
+/* =====================================================================
+   OBČANÉ Mirošov — styl webu
+
+   Čistě bílá grafika, jediný akcent je značková červená #D40000.
+   Žádný framework, žádný build: soubor se nasadí tak, jak je.
+   Písmo Ubuntu je přibalené (Ubuntu Font Licence 1.0 to dovoluje),
+   takže web nezávisí na cizím CDN.
+   ===================================================================== */
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("pisma/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("pisma/Ubuntu-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --cervena: #d40000;
+  --tmava: #aa0000;
+  --text: #1a1a1a;
+  --seda: #5a5a5a;
+  --podklad: #f5f5f5;
+  --linka: #e6e6e6;
+  --sirka: 1120px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--text);
+  font-family: "Ubuntu", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--tmava); }
+
+/* odkaz pro klávesnici, viditelný až po zaměření */
+.preskoc {
+  position: absolute;
+  left: -9999px;
+  background: var(--cervena);
+  color: #fff;
+  padding: .6rem 1rem;
+  z-index: 10;
+}
+.preskoc:focus { left: 1rem; top: 1rem; }
+
+:focus-visible {
+  outline: 3px solid var(--cervena);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------- HLAVIČKA --- */
+.hlavicka {
+  border-bottom: 3px solid var(--cervena);
+}
+
+.pas {
+  max-width: var(--sirka);
+  margin: 0 auto;
+  padding: 2.6rem 1.25rem 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.logo { width: 108px; height: auto; flex: none; }
+
+.hlavicka-text { min-width: 0; }
+
+.znacka {
+  margin: 0;
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .01em;
+  color: var(--cervena);
+}
+
+.cislo {
+  margin: .35rem 0 0;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+}
+.cislo strong {
+  color: var(--cervena);
+  font-size: 1.6em;
+  line-height: 1;
+  vertical-align: -.08em;
+}
+
+.termin {
+  margin: .5rem 0 0;
+  color: var(--seda);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------ MENU ---- */
+.menu {
+  max-width: var(--sirka);
+  margin: 0 auto;
+  padding: 0 1.25rem 1.1rem;
+  display: flex;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+}
+.menu a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: .95rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+.menu a:hover,
+.menu a:focus-visible { border-bottom-color: var(--cervena); }
+
+/* ----------------------------------------------------------- SEKCE ---- */
+.sekce {
+  max-width: var(--sirka);
+  margin: 0 auto;
+  padding: 3.4rem 1.25rem;
+}
+/*  Šedá sekce je přes celou šířku okna, obsah se ale musí zarovnat
+    stejně jako v bílých sekcích. Řeší to odsazení, ne max-width na
+    potomcích: to by u prvků s vlastním margin (nadpis, odstavec)
+    přebilo centrování a nadpis by seděl jinde než text pod ním. */
+.sekce-seda {
+  max-width: none;
+  background: var(--podklad);
+  padding-left: max(1.25rem, (100% - var(--sirka)) / 2);
+  padding-right: max(1.25rem, (100% - var(--sirka)) / 2);
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  line-height: 1.2;
+}
+
+.podnadpis {
+  margin: .5rem 0 2rem;
+  color: var(--seda);
+  max-width: 62ch;
+}
+
+.poznamka {
+  margin-top: 1.6rem;
+  color: var(--seda);
+  font-size: .9rem;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------- KARUSEL ---- */
+.karusel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.karusel-okno {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--linka);
+  background: #fff;
+}
+
+.karusel-pas {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: transform .45s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .karusel-pas { transition: none; }
+}
+
+.snimek {
+  flex: 0 0 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2rem;
+  align-items: center;
+}
+
+.snimek-nahled {
+  border: 1px solid var(--linka);
+  /* náhled plakátu je vysoký; ať slide neroste do nekonečna */
+  max-height: 420px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.snimek h3 {
+  margin: 0 0 .5rem;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+.snimek p { margin: 0 0 1.3rem; color: var(--seda); }
+
+.stahnout {
+  display: inline-block;
+  background: var(--cervena);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  padding: .7rem 1.4rem;
+  border: 2px solid var(--cervena);
+}
+.stahnout:hover,
+.stahnout:focus-visible { background: #fff; color: var(--cervena); }
+.stahnout .velikost { font-weight: 400; opacity: .85; }
+
+.karusel-sip {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  font-size: 1.7rem;
+  line-height: 1;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--linka);
+  cursor: pointer;
+}
+.karusel-sip:hover:not(:disabled) {
+  border-color: var(--cervena);
+  color: var(--cervena);
+}
+.karusel-sip:disabled { opacity: .3; cursor: default; }
+
+.karusel-tecky {
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: 1.2rem;
+}
+.tecka {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid #bdbdbd;
+  background: #fff;
+  cursor: pointer;
+}
+.tecka[aria-selected="true"] {
+  background: var(--cervena);
+  border-color: var(--cervena);
+}
+
+/* -------------------------------------------------------- HODNOCENÍ --- */
+.hodnoceni {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: bod;
+}
+.hodnoceni li {
+  counter-increment: bod;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--linka);
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  gap: 0 1rem;
+  align-items: baseline;
+}
+.hodnoceni li:last-child { border-bottom: 1px solid var(--linka); }
+.hodnoceni li::before {
+  content: counter(bod) ".";
+  color: var(--cervena);
+  font-weight: 700;
+}
+.hodnoceni h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+.hodnoceni .procento {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--tmava);
+  white-space: nowrap;
+}
+.hodnoceni .popis {
+  grid-column: 2 / 4;
+  margin: .45rem 0 0;
+  color: var(--seda);
+  font-size: .95rem;
+}
+
+/* ----------------------------------------------------------- PROGRAM -- */
+.program {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: .85rem 2.4rem;
+}
+.program li {
+  position: relative;
+  padding-left: 1.5rem;
+  break-inside: avoid;
+}
+.program li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: .5rem;
+  height: .5rem;
+  background: var(--cervena);
+}
+
+/* -------------------------------------------------------- KANDIDÁTKA -- */
+.kandidatka {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.6rem 1.2rem;
+}
+
+.kandidat figure { margin: 0; }
+
+.kandidat-foto {
+  position: relative;
+  background: var(--linka);
+}
+.kandidat-foto img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+
+.kandidat-poradi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--text);
+  color: #fff;
+  font-weight: 700;
+  font-size: .95rem;
+  line-height: 1;
+  padding: .4rem .55rem;
+}
+
+.kandidat figcaption { padding-top: .6rem; }
+.kandidat .jmeno { display: block; font-weight: 700; line-height: 1.25; }
+.kandidat .povolani {
+  display: block;
+  color: var(--seda);
+  font-size: .88rem;
+  line-height: 1.35;
+  margin-top: .15rem;
+}
+
+/* ------------------------------------------------------------- SÍTĚ --- */
+.site {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.sit {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.3rem;
+  border: 1px solid var(--linka);
+  text-decoration: none;
+  color: var(--text);
+}
+.sit:hover,
+.sit:focus-visible { border-color: var(--cervena); }
+
+.ikona {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.6;
+}
+.ikona .plna { fill: var(--text); stroke: none; }
+.sit:hover .ikona { stroke: var(--cervena); }
+.sit:hover .ikona .plna { fill: var(--cervena); }
+
+.sit strong { display: block; }
+.sit em {
+  display: block;
+  font-style: normal;
+  color: var(--seda);
+  font-size: .9rem;
+  word-break: break-word;
+}
+
+/* ---------------------------------------------------------- PATIČKA --- */
+.paticka {
+  border-top: 3px solid var(--cervena);
+  padding: 2rem 1.25rem 2.6rem;
+  text-align: center;
+}
+.paticka p { margin: 0; }
+.paticka .drobne {
+  color: var(--seda);
+  font-size: .88rem;
+  margin-top: .3rem;
+}
+
+/* ------------------------------------------------------------ ÚZKÉ ---- */
+@media (max-width: 760px) {
+  .snimek {
+    grid-template-columns: 1fr;
+    gap: 1.3rem;
+    padding: 1.3rem;
+  }
+  .snimek-nahled { max-height: 300px; }
+  .karusel-sip { width: 38px; height: 38px; font-size: 1.4rem; }
+  .hodnoceni li { grid-template-columns: 1.9rem minmax(0, 1fr); }
+  .hodnoceni .procento { grid-column: 2; margin-top: .2rem; }
+  .hodnoceni .popis { grid-column: 2 / 3; }
+}
+
+/* -------------------------------------------------------------- TISK -- */
+@media print {
+  .menu, .karusel-sip, .karusel-tecky, .preskoc { display: none; }
+  .karusel-pas { transform: none !important; display: block; }
+  .snimek { break-inside: avoid; }
+  body { font-size: 11pt; }
+}
