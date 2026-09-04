@@ -18,7 +18,7 @@
       se schovají. Slouží k důkazu, že karusel ne/může za chování
       scrollování.                                                      */
   var KARUSEL_ZAPNUTY = true;
-  var VERZE = 11;
+  var VERZE = 12;
 
   /* prvek s textem — bez innerHTML, ať se do stránky nedá propašovat
      značkování z dat */
@@ -147,25 +147,27 @@
       spolknou. Úmyslné scrollování do půl sekundy po kliknutí nezačne,
       takže o nic nepřijde; dotyk a klávesy se nepotlačují vůbec.       */
   function spolkniDojezd() {
-    /*  Ne pevné okno: volnoběžné kolečko a kinetický touchpad dojíždějí
-        i přes sekundu, pevných 500 ms je pustilo dál a stránka po skoku
-        „odjela nahoru". Štít proto žere wheel události, dokud chodí
-        v souvislé řadě, a zvedne se až 250 ms po poslední z nich.
-        Tvrdý strop 3 s zaručuje, že scrollování nikdy nezůstane mrtvé. */
+    /*  Setrvačný dojezd před klikem do menu jde vždy NAHORU — k menu se
+        scrolluje nahoru. Štít proto žere jen události nahoru (deltaY<0);
+        scrollovat dolů a číst jde hned po doskoku. První pohyb dolů
+        štít okamžitě ukončí: znamená, že se kolečka znovu dotkl člověk,
+        dojezd je fyzicky u konce. Jinak se zvedá 250 ms po poslední
+        snědené události; tvrdý strop 3 s je pojistka.                  */
     var posledni = performance.now();
     var strop = posledni + 3000;
     var hlidka = null;
 
+    function konec() {
+      window.removeEventListener("wheel", filtr);
+      window.clearInterval(hlidka);
+    }
     function filtr(e) {
+      if (e.deltaY >= 0) { konec(); return; }   // dolů = úmysl, pustit
       var ted = performance.now();
       if (ted < strop) {
         e.preventDefault();
         posledni = ted;
       }
-    }
-    function konec() {
-      window.removeEventListener("wheel", filtr);
-      window.clearInterval(hlidka);
     }
     window.addEventListener("wheel", filtr, { passive: false });
     hlidka = window.setInterval(function () {
