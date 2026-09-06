@@ -178,7 +178,7 @@ const HODNOCENI = [
   {
     "nazev": "Efektivní odpadové hospodářství",
     "procento": 80,
-    "popis": "Třídění odpadu ve městě se povedlo výrazně navýšit. Plán svozu plastu od domu bohužel navyšovala finanční náročnost a muselo by dojít ke zdražení ceny za odpad. Kompromisem je posílením míst v kratší docházkové vzdálenosti od domu."
+    "popis": "Třídění odpadu ve městě se povedlo výrazně navýšit. Plán svozu plastu od domu se z ekonomických důvodů nepodařilo naplnit, muselo by totiž dojít k navýšení poplatku za svoz odpadu pro občany. Kompromisem je posílením míst v kratší docházkové vzdálenosti od domu."
   },
   {
     "nazev": "Snížení energetické náročnosti městských budov",
@@ -188,12 +188,12 @@ const HODNOCENI = [
   {
     "nazev": "Údržba zeleně",
     "procento": 80,
-    "popis": "Máme vypracovaný projekt areálu v okolí sokolovny a plány pro výsadbu."
+    "popis": "Údržba zeleně je efektivnější a četnější. Máme vypracovaný projekt areálu v okolí sokolovny a plány pro výsadbu, kterou jsme ještě nedokončili na všech plánovaných místech a chceme v tom pokračovat."
   },
   {
     "nazev": "Rozvoj městských bytů",
     "procento": 50,
-    "popis": "Projekt pro bydlení je v běhu, realizaci zatím přibrzdili jiné stavby, které podléhaly dotaci. Město nakoupilo pozemky pro stavbu domů, které se nyní budou připojovat na veřejné sítě a následně proběhne prodej."
+    "popis": "Projekt pro bydlení je v běhu, realizaci zatím přibrzdily jiné stavby, které podléhaly dotaci. Město nakoupilo pozemky pro stavbu domů, které se nyní budou připojovat na veřejné sítě a následně proběhne prodej."
   },
   {
     "nazev": "Budování volnočasových aktivit",
