@@ -166,6 +166,13 @@ const MATERIALY = [
     "nazev": "Vysvědčení za volební období",
     "popis": "Jak jsme za čtyři roky plnili programové body a co chceme dál. Materiál 180 × 250 mm.",
     "velikost": "32 kB"
+  },
+  {
+    "soubor": "soubory/obcane-casopis-2.pdf",
+    "nahled": "obrazky/obcane-casopis-2.jpg",
+    "nazev": "Mirošovské Střípky — představení kandidátky",
+    "popis": "Celá kandidátka s fotografiemi, hodnocení uplynulého období a program. Materiál 180 × 250 mm pro zpravodaj Mirošovské Střípky.",
+    "velikost": "9.9 MB"
   }
 ];
 

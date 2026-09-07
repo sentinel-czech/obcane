@@ -347,7 +347,9 @@ h2 {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  /* 190px místo 240px: pět dlaždic se tak na plné šířce (--sirka)
+     vejde do jednoho řádku, na užších oknech se zalamují dál samy. */
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 1.4rem;
 }
 
