@@ -3,19 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OBČANÉ Mirošov — volební strana číslo 1</title>
-<meta name="description" content="Kandidátní strana OBČANÉ pro volby do zastupitelstva města Mirošov 9. a 10. října 2026. Kandidátka, program a materiály ke stažení.">
-<meta property="og:title" content="OBČANÉ Mirošov — volební strana číslo 1">
-<meta property="og:description" content="Volby do zastupitelstva města Mirošov, 9. a 10. října 2026.">
+<!-- Titulek a popis jsou neutrální; ve volebním režimu je skript.js
+     přepíše na volební znění. -->
+<title>OBČANÉ Mirošov</title>
+<meta name="description" content="OBČANÉ Mirošov — aktuality pro občany města, naši zastupitelé a program na období 2026–2030.">
+<meta property="og:title" content="OBČANÉ Mirošov">
+<meta property="og:description" content="Aktuality pro občany Mirošova, naši zastupitelé a program na období 2026–2030.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="obrazky/obcane-a2.jpg">
 <link rel="icon" href="obrazky/logo.svg" type="image/svg+xml">
 <!-- ?v= je proti cache: GitHub Pages posílá max-age=600 a prohlížeč pak
      drží starý soubor i po Ctrl+Shift+R. Při každé změně CSS/JS se
      číslo zvýší a prohlížeč si musí stáhnout novou verzi. -->
-<link rel="stylesheet" href="styl.css?v=12">
+<link rel="stylesheet" href="styl.css?v=13">
 </head>
 <body>
+
+<!--  REŽIMY WEBU (nastaveni.js): „vote" = volební web, „common" = běžný
+      web mezi volbami. Skript dá na <body> třídu rezim-vote nebo
+      rezim-common; prvky s třídou jen-vote / jen-common jsou vidět jen
+      v příslušném režimu (styl.css). Dokud skript neproběhne, není
+      vidět ani jedno — stránka neproblikne špatným obsahem.          -->
 
 <a class="preskoc" href="#obsah">Přeskočit na obsah</a>
 
@@ -25,21 +33,81 @@
     <img class="logo" src="obrazky/logo.svg" alt="Logo OBČANÉ Mirošov" width="120" height="120">
     <div class="hlavicka-text">
       <p class="znacka">OBČANÉ</p>
-      <p class="cislo">volební strana číslo <strong>1</strong></p>
-      <p class="termin">Volby do zastupitelstva města Mirošov<br>9. a 10. října 2026</p>
+      <p class="cislo jen-vote">volební strana číslo <strong>1</strong></p>
+      <p class="termin jen-vote">Volby do zastupitelstva města Mirošov<br>9. a 10. října 2026</p>
+      <p class="termin jen-common">Mirošov<br>tři zastupitelé ve volebním období 2026–2030</p>
     </div>
   </div>
 
-  <nav class="menu" id="menu" aria-label="Hlavní nabídka">
+  <!-- Záložky režimů: skript je odkryje, jen když jsou zapnuté oba. -->
+  <nav class="rezimy" id="rezimy" aria-label="Části webu" hidden>
+    <a href="#volby" data-rezim="vote">Volby 2026</a>
+    <a href="#aktualne" data-rezim="common">Aktuálně</a>
+  </nav>
+
+  <nav class="menu jen-vote" id="menu" aria-label="Hlavní nabídka">
     <a href="#program">Program</a>
     <a href="#hodnoceni">Splněné sliby</a>
     <a href="#kandidatka">Kandidátka</a>
     <a href="#materialy">Ke stažení</a>
     <a href="#kontakt">Kontakt</a>
   </nav>
+
+  <nav class="menu jen-common" aria-label="Hlavní nabídka">
+    <a href="#obcanum">Mirošovským občanům</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
 </header>
 
 <main id="obsah">
+
+<!-- ####################################################################
+     REŽIM „common" — běžný web mezi volbami
+     #################################################################### -->
+<div id="rezim-common" class="jen-common" data-rezim-obsah="common">
+<div class="sekce common-mrizka">
+
+  <!-- ================================================ AKTUALITY ====== -->
+  <section id="obcanum" class="obcanum">
+    <h2>Mirošovským občanům</h2>
+    <p class="podnadpis">Co se děje, co chystáme a co jsme udělali.</p>
+    <ol class="aktuality" id="aktuality-seznam">
+      <!-- vyplní skript.js z aktuality/aktuality.js -->
+    </ol>
+    <nav class="strankovani" id="aktuality-strankovani"
+         aria-label="Stránky aktualit" hidden></nav>
+  </section>
+
+  <!-- ================================================ BOČNÍ SLOUPEC == -->
+  <aside class="bok">
+    <section id="zvoleni">
+      <h2>Zvolení zástupci</h2>
+      <p class="podnadpis">Volby do zastupitelstva města Mirošov,
+         9. a 10. října 2026.</p>
+      <ul class="zvoleni" id="zvoleni-seznam">
+        <!-- vyplní skript.js z nastaveni.js a data/kandidati.js -->
+      </ul>
+      <p class="opora">Děkujeme i dvanácti kandidátům, kteří zvoleni
+         nebyli. Zůstávají součástí týmu a svou odborností jsou našim
+         zastupitelům oporou.</p>
+    </section>
+
+    <section id="program-kratce">
+      <h2>Program 2026–2030</h2>
+      <ul class="program program-bok" id="program-kratce-seznam">
+        <!-- vyplní skript.js -->
+      </ul>
+    </section>
+  </aside>
+
+</div>
+</div>
+
+<!-- ####################################################################
+     REŽIM „vote" — volební web. Obsah je beze změny; až budou další
+     volby, stačí v nastaveni.js zapnout rezimy.vote.
+     #################################################################### -->
+<div id="rezim-vote" class="jen-vote" data-rezim-obsah="vote">
 
 <!-- ================================================== HERO: KANDIDÁTI --- -->
 <section class="hero" aria-label="Kandidáti">
@@ -102,7 +170,10 @@
   </ul>
 </section>
 
+</div><!-- /rezim-vote -->
+
 <!-- ============================================================= KONTAKT -->
+<!-- Společný pro oba režimy. -->
 <section id="kontakt" class="sekce sekce-seda">
   <h2>Najdete nás online</h2>
   <a class="zpet-menu" href="#zacatek">&#8593; menu</a>
@@ -133,18 +204,30 @@
     </a>
   </div>
 
-  <p class="vyzva">Dejte hlas kandidátce
+  <p class="vyzva jen-vote">Dejte hlas kandidátce
      <strong>č.&nbsp;1 OBČANÉ</strong>.</p>
 </section>
 
 </main>
 
 <footer class="paticka">
-  <p><strong>OBČANÉ</strong> — volební strana číslo 1 · Mirošov</p>
-  <p class="drobne">Volby do zastupitelstva města Mirošov, 9. a 10. října 2026.</p>
+  <p><strong>OBČANÉ</strong><span class="jen-vote"> — volební strana číslo 1</span> · Mirošov</p>
+  <p class="drobne jen-vote">Volby do zastupitelstva města Mirošov, 9. a 10. října 2026.</p>
+  <p class="drobne jen-common">www.obcane.online</p>
 </footer>
 
-<script src="data/kandidati.js?v=12"></script>
-<script src="skript.js?v=12"></script>
+<!-- Zvětšený obrázek z aktualit. Nativní <dialog>: Esc zavírá sám. -->
+<dialog class="lupa" id="lupa" aria-label="Zvětšený obrázek">
+  <button class="lupa-zavrit" type="button" aria-label="Zavřít">&times;</button>
+  <button class="lupa-sip lupa-vlevo" type="button" aria-label="Předchozí obrázek">&#8249;</button>
+  <img id="lupa-obrazek" alt="">
+  <button class="lupa-sip lupa-vpravo" type="button" aria-label="Další obrázek">&#8250;</button>
+</dialog>
+
+<!-- Pořadí je podstatné: nejdřív nastavení a data, skript.js až po nich. -->
+<script src="nastaveni.js?v=13"></script>
+<script src="data/kandidati.js?v=13"></script>
+<script src="aktuality/aktuality.js?v=13"></script>
+<script src="skript.js?v=13"></script>
 </body>
 </html>

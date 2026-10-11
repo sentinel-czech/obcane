@@ -158,7 +158,10 @@ a { color: var(--tmava); }
 /*  Platí i na telefonu — změřeno, že tam byl Kontakt nedosažitelný taky.
     Obsah zůstává nahoře (žádné centrování), volné místo padá pod výzvu
     před patičku, kde působí jako běžný závěrečný odstup.               */
-#kontakt {
+/*  Jen ve volebním režimu: tam je stránka dlouhá a menu skáče na kotvy.
+    Běžný režim je krátký a celoobrazovkový kontakt by v něm byl jen
+    prázdná šedá plocha.                                                */
+body.rezim-vote #kontakt {
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -569,8 +572,282 @@ h2 {
   .hodnoceni .popis { grid-column: 2 / 3; }
 }
 
+/* =====================================================================
+   REŽIMY WEBU  (vote = volební, common = běžný; viz nastaveni.js)
+   ===================================================================== */
+/*  Skript dá na <body> třídu rezim-vote nebo rezim-common. Dokud to
+    neudělá, nemá body ani jednu a schované je obojí — stránka tak
+    neproblikne obsahem druhého režimu.                                 */
+body:not(.rezim-vote) .jen-vote,
+body:not(.rezim-common) .jen-common { display: none; }
+
+/* záložky režimů — vidět jen když jsou zapnuté oba */
+.rezimy {
+  max-width: var(--sirka);
+  margin: 0 auto;
+  padding: 0 1.25rem 1.1rem;
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+.rezimy[hidden] { display: none; }
+.rezimy a {
+  padding: .5rem 1.1rem;
+  border: 1px solid var(--linka);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: .95rem;
+}
+.rezimy a:hover,
+.rezimy a:focus-visible { border-color: var(--cervena); }
+.rezimy a[aria-current="page"] {
+  background: var(--cervena);
+  border-color: var(--cervena);
+  color: #fff;
+}
+
+/* ------------------------------------------- BĚŽNÝ REŽIM: ROZVRŽENÍ --- */
+/*  Vlevo aktuality, vpravo užší sloupec se zvolenými a programem.
+    Na užším okně se sloupec přesune pod aktuality.                     */
+.common-mrizka {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 3rem;
+  align-items: start;
+}
+.bok { display: grid; gap: 2.6rem; }
+.bok h2 { font-size: 1.35rem; }
+.bok .podnadpis { margin-bottom: 1.2rem; font-size: .92rem; }
+
+/* ---------------------------------------------- ZVOLENÍ ZÁSTUPCI ------ */
+.zvoleni {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .9rem;
+}
+.zvoleny {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.zvoleny img {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  background: var(--linka);
+}
+.zvoleny .jmeno { display: block; font-weight: 700; line-height: 1.25; }
+.zvoleny .hlasy {
+  display: block;
+  color: var(--tmava);
+  font-size: .92rem;
+  margin-top: .15rem;
+}
+.opora {
+  margin: 1.3rem 0 0;
+  padding-left: .9rem;
+  border-left: 3px solid var(--cervena);
+  color: var(--seda);
+  font-size: .92rem;
+  line-height: 1.5;
+}
+
+/* program v bočním sloupci: jeden sloupec, menší písmo */
+.program-bok {
+  grid-template-columns: 1fr;
+  gap: .55rem;
+  font-size: .92rem;
+  line-height: 1.45;
+  margin-top: 1.1rem;
+}
+
+/* --------------------------------------------------- AKTUALITY -------- */
+.aktuality {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/*  Jedna aktualita = jeden řádek: miniatura | text | PDF.               */
+.aktualita {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  gap: 0 1.3rem;
+  align-items: start;
+  padding: 1.3rem 0;
+  border-top: 1px solid var(--linka);
+}
+.aktualita:last-child { border-bottom: 1px solid var(--linka); }
+.aktualita.bez-obrazku { grid-template-columns: minmax(0, 1fr) auto; }
+.aktualita-nic { color: var(--seda); padding: 1rem 0; }
+
+.aktualita-nahled,
+.aktualita-mini {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--linka);
+  background: var(--podklad);
+  cursor: zoom-in;
+}
+.aktualita-nahled:hover,
+.aktualita-mini:hover { border-color: var(--cervena); }
+.aktualita-nahled { width: 120px; }
+.aktualita-nahled img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.aktualita-datum {
+  margin: 0;
+  color: var(--seda);
+  font-size: .85rem;
+}
+.aktualita h3 { margin: .1rem 0 .4rem; font-size: 1.15rem; line-height: 1.3; }
+
+/*  Náhled textu na --radku řádků (nastaveni.js → RADKU_NAHLEDU);
+    po rozbalení se omezení zruší.                                      */
+/*  Sbalený náhled teče jako jeden odstavec: s pre-line by prázdný řádek
+    mezi odstavci spotřeboval jeden ze čtyř řádků a zbyly by na něm jen
+    tři tečky. Odstavce se vrátí až po rozbalení.                       */
+.aktualita-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--radku, 4);
+  line-clamp: var(--radku, 4);
+  overflow: hidden;
+}
+.aktualita.rozbaleno .aktualita-text {
+  display: block;
+  white-space: pre-line;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+  overflow: visible;
+}
+.aktualita-vice {
+  margin-top: .35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tmava);
+  font: inherit;
+  font-size: .92rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.aktualita-vice[hidden] { display: none; }
+
+.aktualita-dalsi {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-top: .8rem;
+}
+.aktualita-mini { width: 64px; }
+.aktualita-mini img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+
+.aktualita-pdf {
+  align-self: start;
+  background: var(--cervena);
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: .55rem 1rem;
+}
+.aktualita-pdf:hover,
+.aktualita-pdf:focus-visible { background: var(--tmava); }
+
+/* stránkování aktualit */
+.strankovani {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  margin-top: 1.6rem;
+}
+.strankovani[hidden] { display: none; }
+.strankovani button {
+  min-width: 2.4rem;
+  padding: .45rem .8rem;
+  border: 1px solid var(--linka);
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: .92rem;
+  cursor: pointer;
+}
+.strankovani button:hover:not(:disabled) { border-color: var(--cervena); }
+.strankovani button[aria-current="page"] {
+  background: var(--cervena);
+  border-color: var(--cervena);
+  color: #fff;
+  font-weight: 700;
+}
+.strankovani button:disabled { color: #b5b5b5; cursor: default; }
+
+/* -------------------------------------------------------------- LUPA -- */
+dialog.lupa {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: visible;
+}
+dialog.lupa::backdrop { background: rgba(0, 0, 0, .82); }
+dialog.lupa img {
+  max-width: 92vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  background: #fff;
+}
+.lupa-zavrit,
+.lupa-sip {
+  position: fixed;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  background: #fff;
+  color: var(--text);
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.lupa-zavrit:hover,
+.lupa-sip:hover { background: var(--cervena); color: #fff; }
+.lupa-zavrit { top: 1rem; right: 1rem; }
+.lupa-sip { top: 50%; transform: translateY(-50%); }
+.lupa-sip[hidden] { display: none; }
+.lupa-vlevo { left: 1rem; }
+.lupa-vpravo { right: 1rem; }
+
+/* ------------------------------------------- BĚŽNÝ REŽIM: UŽŠÍ OKNA --- */
+@media (max-width: 900px) {
+  .common-mrizka { grid-template-columns: 1fr; gap: 2.6rem; }
+}
+@media (max-width: 760px) {
+  /* miniatura a text vedle sebe, PDF pod textem */
+  .aktualita { grid-template-columns: 88px minmax(0, 1fr); }
+  .aktualita.bez-obrazku { grid-template-columns: 1fr; }
+  .aktualita-nahled { width: 88px; }
+  .aktualita-pdf {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: .8rem;
+  }
+  .aktualita.bez-obrazku .aktualita-pdf { grid-column: 1; }
+}
+
 /* -------------------------------------------------------------- TISK -- */
 @media print {
+  .rezimy, .strankovani, .aktualita-vice { display: none; }
+  .aktualita-text { display: block; overflow: visible; }
   .menu, .karusel-sip, .karusel-tecky, .preskoc { display: none; }
   .karusel-pas { transform: none !important; display: block; }
   .snimek, .material { break-inside: avoid; }

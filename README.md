@@ -1,7 +1,8 @@
 # OBČANÉ Mirošov — web
 
-Statický web volební strany OBČANÉ pro volby do zastupitelstva města
-Mirošov 9. a 10. října 2026.
+Statický web sdružení OBČANÉ Mirošov. Má dva režimy: volební web
+(volby do zastupitelstva města 9. a 10. října 2026) a běžný web mezi
+volbami s aktualitami pro občany.
 
 ## Nasazení
 
@@ -35,7 +36,10 @@ i dvojklikem z disku.
 |---|---|
 | `index.html` | struktura stránky |
 | `styl.css` | vzhled — bílý podklad, jediný akcent je červená `#D40000` |
-| `skript.js` | karusel a vypsání seznamů z dat |
+| `skript.js` | režimy, karusel, aktuality a vypsání seznamů z dat |
+| `nastaveni.js` | **ručně** — režimy webu, stránkování aktualit, zvolení zastupitelé |
+| `aktuality/aktuality.js` | **ručně** — aktuality do sekce „Mirošovským občanům" |
+| `aktuality/RRRR-MM-nazev/` | **ručně** — obrázky a PDF k jedné aktualitě |
 | `data/kandidati.js` | **generovaný** — kandidáti, materiály, hodnocení, program |
 | `obrazky/`, `soubory/`, `pisma/` | **generované** — fotky, náhledy, PDF, písmo |
 
@@ -56,7 +60,54 @@ Po změně kterékoli z nich se web přegeneruje z kořene projektu:
 ./prelozit.sh web
 ```
 
-Ručně psané jsou jen `index.html`, `styl.css`, `skript.js` a tento soubor.
+Ručně psané jsou `index.html`, `styl.css`, `skript.js`, `nastaveni.js`,
+složka `aktuality/` a tento soubor. `./prelozit.sh web` na ně nesahá.
+
+## Režimy webu
+
+V `nastaveni.js` jsou dva přepínače:
+
+```js
+rezimy: { vote: false, common: true }
+```
+
+- **`vote`** — volební web: karusel kandidátů, program, vysvědčení,
+  kandidátka, materiály ke stažení, výzva k hlasu.
+- **`common`** — běžný web: aktuality „Mirošovským občanům", zvolení
+  zástupci s počtem hlasů a krátký program.
+
+Je-li zapnutý jen jeden, web ukazuje jen ten a žádné záložky nejsou
+vidět. Jsou-li zapnuté oba, objeví se nahoře záložky *Volby 2026*
+a *Aktuálně*; volební je první a výchozí. Kontakty jsou společné.
+
+Před dalšími volbami tedy stačí nastavit `vote: true` (a přepsat volební
+texty v `index.html` — číslo strany, termín, popisek záložky).
+
+Tamtéž: `AKTUALIT_NA_STRANKU` (stránkování, výchozí 15),
+`RADKU_NAHLEDU` (kolik řádků textu je vidět před „více", výchozí 4)
+a `zvoleni` — pořadí na kandidátce a počet hlasů; jméno a fotka se
+dohledají v `data/kandidati.js`.
+
+## Jak přidat aktualitu
+
+1. Založte složku `aktuality/RRRR-MM-nazev/` a dejte do ní obrázky
+   (1 až 5) a případně PDF.
+2. V `aktuality/aktuality.js` přidejte **na začátek** seznamu blok:
+
+   ```js
+   {
+     datum: "2026-11-05",
+     nadpis: "Titulek",
+     text: "První odstavec.\n\nDruhý odstavec.",
+     obrazky: ["aktuality/2026-11-nazev/foto.jpg"],
+     pdf: "aktuality/2026-11-nazev/dokument.pdf"
+   },
+   ```
+
+   `obrazky` i `pdf` jsou nepovinné. První obrázek je miniatura v řádku,
+   kliknutím se zvětší. Text je prostý — HTML se vypíše doslova.
+3. V `index.html` zvedněte číslo `?v=` u skriptů (a `VERZE`
+   v `skript.js`), jinak návštěvníci uvidí starou verzi ještě deset minut.
 
 ## Co ještě chybí
 

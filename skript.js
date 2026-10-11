@@ -18,7 +18,15 @@
       se schovají. Slouží k důkazu, že karusel ne/může za chování
       scrollování.                                                      */
   var KARUSEL_ZAPNUTY = true;
-  var VERZE = 12;
+  var VERZE = 13;
+
+  /*  Nastavení přichází z nastaveni.js. Kdyby soubor chyběl, web se
+      zachová jako dřív — čistě volební.                                 */
+  var CFG = (typeof NASTAVENI !== "undefined" && NASTAVENI) || {};
+  var TITUL = {
+    vote: "OBČANÉ Mirošov — volební strana číslo 1",
+    common: "OBČANÉ Mirošov"
+  };
 
   /* prvek s textem — bez innerHTML, ať se do stránky nedá propašovat
      značkování z dat */
@@ -270,12 +278,303 @@
   }
 
   /* --------------------------------------------------------- PROGRAM -- */
+  /*  Tentýž program se vypisuje na dvou místech: ve volebním režimu
+      a krátce v bočním sloupci běžného režimu.                          */
   function vypisProgram() {
-    var seznam = document.getElementById("program-seznam");
-    if (!seznam || typeof PROGRAM === "undefined") { return; }
-    PROGRAM.forEach(function (bod) {
-      seznam.appendChild(prvek("li", null, bod));
+    if (typeof PROGRAM === "undefined") { return; }
+    ["program-seznam", "program-kratce-seznam"].forEach(function (id) {
+      var seznam = document.getElementById(id);
+      if (!seznam) { return; }
+      PROGRAM.forEach(function (bod) {
+        seznam.appendChild(prvek("li", null, bod));
+      });
     });
+  }
+
+  /* ------------------------------------------------- ZVOLENÍ ZÁSTUPCI - */
+  function sklonujHlasy(n) {
+    if (n === 1) { return n + " hlas"; }
+    if (n >= 2 && n <= 4) { return n + " hlasy"; }
+    return n + " hlasů";
+  }
+
+  /*  Jméno a fotka se berou z KANDIDATI podle pořadí na kandidátce —
+      v nastaveni.js je jen pořadí a počet hlasů.                        */
+  function vypisZvolene() {
+    var seznam = document.getElementById("zvoleni-seznam");
+    if (!seznam || !CFG.zvoleni || typeof KANDIDATI === "undefined") { return; }
+
+    CFG.zvoleni.forEach(function (z) {
+      var k = null;
+      KANDIDATI.forEach(function (x) { if (x.poradi === z.poradi) { k = x; } });
+      if (!k) { return; }
+
+      var li = prvek("li", "zvoleny");
+      var img = document.createElement("img");
+      img.src = k.ctverec || ("obrazky/kandidati/" + k.fotka);
+      img.alt = k.jmeno;
+      img.loading = "lazy";
+      img.width = 600;
+      img.height = 600;
+      li.appendChild(img);
+
+      var text = prvek("div", "zvoleny-text");
+      text.appendChild(prvek("span", "jmeno", k.jmeno));
+      text.appendChild(prvek("span", "hlasy", sklonujHlasy(z.hlasy)));
+      li.appendChild(text);
+      seznam.appendChild(li);
+    });
+  }
+
+  /* ------------------------------------------------------------ LUPA -- */
+  /*  Zvětšení obrázků z aktualit. Nativní <dialog> — Esc a fokus řeší
+      prohlížeč. Kde dialog není, obrázek se otevře v novém panelu.      */
+  function otevriLupu(obrazky, kde) {
+    var dialog = document.getElementById("lupa");
+    var img = document.getElementById("lupa-obrazek");
+    if (!dialog || !img || typeof dialog.showModal !== "function") {
+      window.open(obrazky[kde], "_blank");
+      return;
+    }
+    var vlevo = dialog.querySelector(".lupa-vlevo");
+    var vpravo = dialog.querySelector(".lupa-vpravo");
+
+    function ukaz(i) {
+      var n = obrazky.length;
+      kde = ((i % n) + n) % n;
+      img.src = obrazky[kde];
+      img.alt = "Obrázek " + (kde + 1) + " z " + n;
+    }
+    /*  Posluchače se přiřazují přes on…, ne addEventListener: lupa se
+        otevírá opakovaně a staré posluchače by se jinak vršily.        */
+    vlevo.hidden = vpravo.hidden = obrazky.length < 2;
+    vlevo.onclick = function () { ukaz(kde - 1); };
+    vpravo.onclick = function () { ukaz(kde + 1); };
+    dialog.querySelector(".lupa-zavrit").onclick = function () { dialog.close(); };
+    dialog.onclick = function (e) {
+      if (e.target === dialog) { dialog.close(); }   // klik mimo obrázek
+    };
+    dialog.onkeydown = function (e) {
+      if (obrazky.length < 2) { return; }
+      if (e.key === "ArrowLeft") { ukaz(kde - 1); }
+      if (e.key === "ArrowRight") { ukaz(kde + 1); }
+    };
+
+    ukaz(kde);
+    dialog.showModal();
+  }
+
+  /* ------------------------------------------------------- AKTUALITY -- */
+  var MESICE = ["ledna", "února", "března", "dubna", "května", "června",
+                "července", "srpna", "září", "října", "listopadu", "prosince"];
+
+  function ceskeDatum(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+    if (!m) { return iso || ""; }
+    return parseInt(m[3], 10) + ". " + MESICE[parseInt(m[2], 10) - 1] + " " + m[1];
+  }
+
+  function nahledObrazku(obrazky, i, trida) {
+    var b = prvek("button", trida);
+    b.type = "button";
+    b.setAttribute("aria-label", "Zvětšit obrázek " + (i + 1));
+    var img = document.createElement("img");
+    img.src = obrazky[i];
+    img.alt = "";
+    img.loading = "lazy";
+    b.appendChild(img);
+    b.addEventListener("click", function () { otevriLupu(obrazky, i); });
+    return b;
+  }
+
+  function radekAktuality(a) {
+    var obrazky = (a.obrazky || []).slice(0, 5);
+    var li = prvek("li", "aktualita" + (obrazky.length ? "" : " bez-obrazku"));
+
+    if (obrazky.length) {
+      li.appendChild(nahledObrazku(obrazky, 0, "aktualita-nahled"));
+    }
+
+    var telo = prvek("div", "aktualita-telo");
+    telo.appendChild(prvek("p", "aktualita-datum", ceskeDatum(a.datum)));
+    telo.appendChild(prvek("h3", null, a.nadpis));
+
+    /*  Text je jeden blok s white-space: pre-line (odstavce = prázdné
+        řádky v datech). Jeden blok proto, že line-clamp přes několik
+        <p> počítá řádky nespolehlivě.                                   */
+    var text = prvek("div", "aktualita-text", a.text);
+    telo.appendChild(text);
+
+    var vice = prvek("button", "aktualita-vice", "více");
+    vice.type = "button";
+    vice.hidden = true;                       // odkryje zmerAktuality()
+    vice.setAttribute("aria-expanded", "false");
+    vice.addEventListener("click", function () {
+      var otevrit = !li.classList.contains("rozbaleno");
+      li.classList.toggle("rozbaleno", otevrit);
+      vice.textContent = otevrit ? "méně" : "více";
+      vice.setAttribute("aria-expanded", otevrit ? "true" : "false");
+    });
+    telo.appendChild(vice);
+
+    if (obrazky.length > 1) {
+      var pruh = prvek("div", "aktualita-dalsi");
+      for (var i = 1; i < obrazky.length; i++) {
+        pruh.appendChild(nahledObrazku(obrazky, i, "aktualita-mini"));
+      }
+      telo.appendChild(pruh);
+    }
+    li.appendChild(telo);
+
+    if (a.pdf) {
+      var pdf = prvek("a", "aktualita-pdf", "PDF ke stažení");
+      pdf.href = a.pdf;
+      pdf.setAttribute("download", "");
+      li.appendChild(pdf);
+    }
+    return li;
+  }
+
+  /*  Tlačítko „více" má smysl jen u textu, který se do náhledu nevešel.
+      To jde změřit až na viditelném prvku — proto se měří znovu při
+      přepnutí do běžného režimu a při změně šířky okna.                 */
+  function zmerAktuality() {
+    var radky = document.querySelectorAll("#aktuality-seznam .aktualita");
+    Array.prototype.forEach.call(radky, function (li) {
+      if (li.classList.contains("rozbaleno")) { return; }
+      var text = li.querySelector(".aktualita-text");
+      var vice = li.querySelector(".aktualita-vice");
+      if (!text || !vice || !text.clientHeight) { return; }
+      vice.hidden = text.scrollHeight <= text.clientHeight + 1;
+    });
+  }
+
+  function vypisAktuality() {
+    var seznam = document.getElementById("aktuality-seznam");
+    var nav = document.getElementById("aktuality-strankovani");
+    if (!seznam) { return; }
+    var vse = (typeof AKTUALITY !== "undefined" && AKTUALITY) || [];
+
+    seznam.style.setProperty("--radku", CFG.RADKU_NAHLEDU || 4);
+    if (!vse.length) {
+      seznam.appendChild(prvek("li", "aktualita-nic", "Zatím tu nic není."));
+      return;
+    }
+
+    var naStranku = Math.max(1, CFG.AKTUALIT_NA_STRANKU || 15);
+    var stran = Math.ceil(vse.length / naStranku);
+    var strana = 0;
+
+    function tlacitko(text, cil, popis) {
+      var b = prvek("button", null, text);
+      b.type = "button";
+      if (popis) { b.setAttribute("aria-label", popis); }
+      if (cil < 0 || cil >= stran) {
+        b.disabled = true;
+      } else if (cil === strana) {
+        b.setAttribute("aria-current", "page");
+      }
+      b.addEventListener("click", function () {
+        strana = cil;
+        vykresli();
+        document.getElementById("obcanum").scrollIntoView();
+      });
+      return b;
+    }
+
+    function vykresli() {
+      seznam.textContent = "";
+      vse.slice(strana * naStranku, (strana + 1) * naStranku)
+         .forEach(function (a) { seznam.appendChild(radekAktuality(a)); });
+
+      if (nav) {
+        nav.textContent = "";
+        nav.hidden = stran < 2;
+        if (stran > 1) {
+          nav.appendChild(tlacitko("‹ Novější", strana - 1, "Novější aktuality"));
+          for (var i = 0; i < stran; i++) {
+            nav.appendChild(tlacitko(String(i + 1), i, "Stránka " + (i + 1)));
+          }
+          nav.appendChild(tlacitko("Starší ›", strana + 1, "Starší aktuality"));
+        }
+      }
+      zmerAktuality();
+    }
+
+    vykresli();
+    window.addEventListener("resize", zmerAktuality);
+  }
+
+  /* --------------------------------------------------------- REŽIMY --- */
+  /*  nastaveni.js říká, které režimy jsou zapnuté. Aktivní režim dostane
+      třídu na <body> (rezim-vote / rezim-common) a styl podle ní ukáže
+      prvky jen-vote / jen-common. Záložky jsou vidět jen při dvou
+      zapnutých režimech; vote je první a je i výchozí.                  */
+  function rezimy(priAktivaci) {
+    var R = CFG.rezimy || { vote: true, common: false };
+    var zapnute = [];
+    if (R.vote) { zapnute.push("vote"); }
+    if (R.common) { zapnute.push("common"); }
+    if (!zapnute.length) { zapnute = ["vote"]; }   // prázdný web nikdy
+
+    var HASH = { vote: "#volby", common: "#aktualne" };
+    var zalozky = document.getElementById("rezimy");
+    var aktivni = null;
+
+    /*  Režim z adresy: buď přímo #volby / #aktualne, nebo kotva sekce,
+        která do některého režimu patří (odkaz na #kandidatka apod.).    */
+    function zAdresy() {
+      var h = window.location.hash;
+      if (h === HASH.vote) { return "vote"; }
+      if (h === HASH.common) { return "common"; }
+      if (h.length > 1) {
+        var el = document.getElementById(h.slice(1));
+        var obal = el && el.closest && el.closest("[data-rezim-obsah]");
+        if (obal) { return obal.getAttribute("data-rezim-obsah"); }
+      }
+      return null;
+    }
+
+    function nastav(r) {
+      if (zapnute.indexOf(r) < 0) { r = zapnute[0]; }
+      if (r === aktivni) { return; }
+      aktivni = r;
+      document.body.classList.toggle("rezim-vote", r === "vote");
+      document.body.classList.toggle("rezim-common", r === "common");
+      document.title = TITUL[r];
+      if (zalozky) {
+        Array.prototype.forEach.call(zalozky.querySelectorAll("a"), function (a) {
+          if (a.getAttribute("data-rezim") === r) {
+            a.setAttribute("aria-current", "page");
+          } else {
+            a.removeAttribute("aria-current");
+          }
+        });
+      }
+      priAktivaci(r);
+    }
+
+    if (zalozky) {
+      zalozky.hidden = zapnute.length < 2;
+      Array.prototype.forEach.call(zalozky.querySelectorAll("a"), function (a) {
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          var r = a.getAttribute("data-rezim");
+          nastav(r);
+          if (window.history && history.replaceState) {
+            history.replaceState(null, "", HASH[r]);
+          }
+          window.scrollTo(0, 0);
+        });
+      });
+    }
+
+    window.addEventListener("hashchange", function () {
+      var r = zAdresy();
+      if (r) { nastav(r); }
+    });
+
+    nastav(zAdresy() || zapnute[0]);
   }
 
   /* ------------------------------------------------------ KANDIDÁTKA -- */
@@ -312,7 +611,13 @@
     console.log("[web] verze " + VERZE
                 + ", karusel " + (KARUSEL_ZAPNUTY ? "zapnut" : "vypnut"));
     kotvy();
-    if (typeof KANDIDATI !== "undefined") {
+
+    /*  Karusel se spouští až při první aktivaci volebního režimu —
+        na skrytém webu nemá jeho časovač co dělat.                      */
+    var karuselBezi = false;
+    function spustKarusel() {
+      if (karuselBezi || typeof KANDIDATI === "undefined") { return; }
+      karuselBezi = true;
       if (KARUSEL_ZAPNUTY) {
         Karusel("karusel", "karusel-pas", "karusel-tecky", KANDIDATI,
                 snimekKandidata, function (k) { return k.jmeno; });
@@ -326,10 +631,26 @@
           function (e) { e.style.display = "none"; });
       }
     }
+
     vypisProgram();
     vypisHodnoceni();
     vypisKandidatku();
     vypisMaterialy();
+    vypisZvolene();
+    vypisAktuality();
+
+    rezimy(function (rezim) {
+      if (rezim === "vote") { spustKarusel(); }
+      if (rezim === "common") { zmerAktuality(); }
+    });
+
+    /*  Odkaz přímo na sekci (např. …/#kandidatka): prohlížeč zkoušel
+        odrolovat dřív, než skript režim odkryl, takže cíl ještě neměl
+        žádnou výšku. Jeden skok navíc to srovná.                        */
+    if (window.location.hash.length > 1) {
+      var cil = document.getElementById(window.location.hash.slice(1));
+      if (cil) { cil.scrollIntoView(); }
+    }
   }
 
   if (document.readyState === "loading") {
