@@ -21,6 +21,26 @@
 var AKTUALITY = [
 
   {
+    datum: "2026-10-13",
+    nadpis: "Co bude po volbách",
+    text:
+      "Výsledky voleb už známe. Co bude dál? Připravili jsme krátkého " +
+      "průvodce: jaké kroky teď následují, kdy se sejde nové " +
+      "zastupitelstvo a co ho čeká v dalších čtyřech letech.\n\n" +
+      "Ustavující zasedání svolává dosavadní starosta. Zastupitelé na " +
+      "něm složí slib a zvolí starostu, místostarostu a další členy " +
+      "rady města. Zasedání je veřejné, přijít může každý.\n\n" +
+      "Termín zatím známý není. Jakmile bude na úřední desce, dáme " +
+      "vám vědět.",
+    obrazky: [
+      "aktuality/2026-10-po-volbach/obcane-po-volbach-1.jpg",
+      "aktuality/2026-10-po-volbach/obcane-po-volbach-2.jpg",
+      "aktuality/2026-10-po-volbach/obcane-po-volbach-3.jpg",
+      "aktuality/2026-10-po-volbach/obcane-po-volbach-4.jpg"
+    ]
+  },
+
+  {
     datum: "2026-10-11",
     nadpis: "Děkujeme!",
     text:
