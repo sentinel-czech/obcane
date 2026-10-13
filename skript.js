@@ -18,7 +18,7 @@
       se schovají. Slouží k důkazu, že karusel ne/může za chování
       scrollování.                                                      */
   var KARUSEL_ZAPNUTY = true;
-  var VERZE = 14;
+  var VERZE = 15;
 
   /*  Nastavení přichází z nastaveni.js. Kdyby soubor chyběl, web se
       zachová jako dřív — čistě volební.                                 */

@@ -37,7 +37,8 @@ var AKTUALITY = [
       "aktuality/2026-10-po-volbach/obcane-po-volbach-2.jpg",
       "aktuality/2026-10-po-volbach/obcane-po-volbach-3.jpg",
       "aktuality/2026-10-po-volbach/obcane-po-volbach-4.jpg"
-    ]
+    ],
+    pdf: "aktuality/2026-10-po-volbach/obcane-po-volbach.pdf"
   },
 
   {
